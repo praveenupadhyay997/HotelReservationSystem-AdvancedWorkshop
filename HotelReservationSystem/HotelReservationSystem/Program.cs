@@ -22,9 +22,13 @@ namespace HotelReservationSystem
             HotelReservationRepository.AddHotelRecords("Ridgewood", 220, 150, 5);
             /// Display the record in the hotel record dictionary
             HotelReservationRepository.DisplayRecordsInDictionary();
-            /// UC 2 and 4 -- Print the hotel with the cheapest rates
+            ///// UC 2 and 4 -- Print the hotel with the cheapest rates
+            ///// Also considered the weekend and weekdays to compute the total expense
+            //HotelReservationRepository.FindCheapestHotel();
+            /// UC 6 -- Print the hotel with the cheapest rates and best ratings
             /// Also considered the weekend and weekdays to compute the total expense
-            HotelReservationRepository.FindCheapestHotel();
+            Tuple<string, int, int> output = HotelReservationRepository.FindCheapestBestRatedHotels();
+            Console.WriteLine("Cheapest Hotel - {0}, Cheapest Rate - {1}, Best Rating - {2} ", output.Item1, output.Item2, output.Item3);
             Console.ReadLine();
         }
     }
