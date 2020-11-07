@@ -14,28 +14,77 @@ namespace HotelReservationSystem
     public class HotelReservationRepository
     {
         /// <summary>
-        /// Dictionary to store the record of the hotel and the totalExpense of thehotel
+        /// Dictionary to store the record of the hotel and the hotel details for regular customers
         /// </summary>
-        public static Dictionary<string, HotelDetails> onlineHotelRecords = new Dictionary<string, HotelDetails>();
+        public static Dictionary<string, HotelDetails> onlineHotelRecordsForRegularCutomers = new Dictionary<string, HotelDetails>();
+        /// <summary>
+        /// Dictionary to store the record of the hotel and the hotel details for reward customers
+        /// </summary>
+        public static Dictionary<string, HotelDetails> onlineHotelRecordsForRewardCutomers = new Dictionary<string, HotelDetails>();
+        /// <summary>
+        /// Method to add the data to the multiple customer types
+        /// </summary>
+        /// <param name="customerType"></param>
+        public static void DefiningAdditionRepository(CustomerType customerType)
+        {
+            switch (customerType)
+            {
+                /// Adding the detail for the regular customer type
+                case CustomerType.REGULAR:
+                    AddHotelRecords("Lakewood", 110, 90, 3, 1);
+                    AddHotelRecords("Bridgewood", 150, 50, 4, 1);
+                    AddHotelRecords("Ridgewood", 220, 150, 5, 1);
+                    break;
+                /// Adding the detail for the rewarded customer type
+                case CustomerType.REWARD:
+                    AddHotelRecords("Lakewood", 80, 80, 3, 2);
+                    AddHotelRecords("Bridgewood", 110, 50, 4, 2);
+                    AddHotelRecords("Ridgewood", 100, 40, 5, 2);
+                    break;
+                /// Catching the exception for the invalid customer type
+                default:
+                    throw new HotelReservationCustomException(HotelReservationCustomException.ExceptionType.INVALID_CUSTOMER_TYPE, "Does not support this customer type");
+            }
+        }
         /// <summary>
         /// UC1 -- Adding the Hotel Record to the online hotel record dictionary
         /// </summary>
         /// <param name="hotelName"></param>
         /// <param name="weekdayRate"></param>
         /// <param name="weekendRate"></param>
-        public static void AddHotelRecords(string hotelName, int weekdayRate, int weekendRate, int rating)
+        public static void AddHotelRecords(string hotelName, int weekdayRate, int weekendRate, int rating, int type)
         {
-            if (onlineHotelRecords.ContainsKey(hotelName))
+            if(type ==1)
             {
-                Console.WriteLine("Record Already exists. Kindly enter a different record...");
+                if (onlineHotelRecordsForRegularCutomers.ContainsKey(hotelName))
+                {
+                    Console.WriteLine("Record Already exists. Kindly enter a different record...");
+                }
+                else
+                {
+                    HotelDetails newHotelRecord = new HotelDetails(hotelName, weekdayRate, weekendRate, rating);
+                    onlineHotelRecordsForRegularCutomers.Add(hotelName, newHotelRecord);
+                }           
             }
             else
             {
-                HotelDetails newHotelRecord = new HotelDetails(hotelName, weekdayRate, weekendRate, rating);
-                onlineHotelRecords.Add(hotelName, newHotelRecord);
+                if (onlineHotelRecordsForRewardCutomers.ContainsKey(hotelName))
+                {
+                    Console.WriteLine("Record Already exists. Kindly enter a different record...");
+                }
+                else
+                {
+                    HotelDetails newHotelRecord = new HotelDetails(hotelName, weekdayRate, weekendRate, rating);
+                    onlineHotelRecordsForRewardCutomers.Add(hotelName, newHotelRecord);
+                }
             }
         }
-        public static Dictionary<string, int> CalculateTotalRateForEachHotel()
+        /// <summary>
+        /// Calculate the total fare for each hotel and it's type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static Dictionary<string, int> CalculateTotalRateForEachHotel(int type)
         {
             /// Dictionary to store the (rateperday*numberofdaysofStay) and name of the hotel as the key
             Dictionary<string, int> rateRecords = new Dictionary<string, int>();
@@ -51,7 +100,7 @@ namespace HotelReservationSystem
                 /// Computing the number ofdays of stay requested by the customer
                 int noOfDaysOfStay = (checkoutDate - bookingDate).Days + 1;
                 /// Iterating over the online hotel records to store the total expense and hotel name
-                foreach (var records in onlineHotelRecords)
+                foreach (var records in ((type==1)? onlineHotelRecordsForRegularCutomers :onlineHotelRecordsForRewardCutomers))
                 {
                     int totalExpense = 0;
                     DateTime currentDate = bookingDate;
@@ -82,10 +131,23 @@ namespace HotelReservationSystem
         }
         /// <summary>
         /// Method to display the details of record in the address book
+        /// Refactored to print the detail of different customer types
         /// </summary>
         public static void DisplayRecordsInDictionary()
         {
-            foreach (var records in onlineHotelRecords)
+            /// Displaying the record for the Regular Customers
+            Console.WriteLine("=============================================");
+            Console.WriteLine(" Regular Customers Detail for the Hotel List ");
+            Console.WriteLine("=============================================");
+            foreach (var records in onlineHotelRecordsForRegularCutomers)
+            {
+                Console.WriteLine($"Hotel Name = {records.Key}, WeekDay Rate Per Day = {records.Value.weekdayRate}, WeekDay Rate Per Day = {records.Value.weekendRate}, Ratings = {records.Value.rating}\n");
+            }
+            /// Displaying the record for the Rewarded Customers
+            Console.WriteLine("==============================================");
+            Console.WriteLine(" Rewarded Customers Detail for the Hotel List ");
+            Console.WriteLine("==============================================");
+            foreach (var records in onlineHotelRecordsForRewardCutomers)
             {
                 Console.WriteLine($"Hotel Name = {records.Key}, WeekDay Rate Per Day = {records.Value.weekdayRate}, WeekDay Rate Per Day = {records.Value.weekendRate}, Ratings = {records.Value.rating}\n");
             }
@@ -95,14 +157,14 @@ namespace HotelReservationSystem
         /// UC4 -- Considering the weekend and weekday difference of rates
         /// First finding the hotel with minimum totalExpense per day
         /// </summary>
-        public static void FindCheapestHotel()
+        public static void FindCheapestHotel(int type)
         {
             /// Catching the exception of null value to the sorted list
             try
             {
                 /// Refactor - Fixing the voilation of Dry Principle by calculating the total fare using a method call
                 Dictionary<string, int> rateRecords = new Dictionary<string, int>();
-                rateRecords = CalculateTotalRateForEachHotel();
+                rateRecords = CalculateTotalRateForEachHotel(type);
                 var keyValueForSorted = rateRecords.OrderBy(keyValueForSorted => keyValueForSorted.Value).First();
                 /// Returning the custom sized null exception for no entry of the rate value
                 if (keyValueForSorted.Key == null)
@@ -120,7 +182,7 @@ namespace HotelReservationSystem
         /// Else consider the second next in cost reduction
         /// </summary>
         /// <returns></returns>
-        public static Tuple<string, int, int> FindCheapestBestRatedHotels()
+        public static Tuple<string, int, int> FindCheapestBestRatedHotels(int type)
         {
             bool flag = false;
             /// Catching the exception of null value to the sorted list
@@ -128,11 +190,11 @@ namespace HotelReservationSystem
             {
                 /// Refactor - Fixing the voilation of Dry Principle by calculating the total fare using a method call
                 Dictionary<string, int> rateRecords = new Dictionary<string, int>();
-                rateRecords = CalculateTotalRateForEachHotel();
+                rateRecords = CalculateTotalRateForEachHotel(type);
                 /// Dictionary to store the rating Records and name of dictionary
                 Dictionary<string, int> ratingRecords = new Dictionary<string, int>();
                 /// Adding the rating and hotel name to the dictionary
-                foreach (var records in onlineHotelRecords)
+                foreach (var records in ((type == 1) ? onlineHotelRecordsForRegularCutomers : onlineHotelRecordsForRewardCutomers))
                 {
                     ratingRecords.Add(records.Value.hotelName, records.Value.rating);
                 }
@@ -174,7 +236,7 @@ namespace HotelReservationSystem
         /// UC7 -- Find the best rated hotel and its cost for a given date range
         /// </summary>
         /// <returns></returns
-        public static Tuple<string, int, int> BestRatedHotelForDateRange()
+        public static Tuple<string, int, int> BestRatedHotelForDateRange(int type)
         {
             bool flag = false;
             /// Catching the exception of null value to the sorted list
@@ -182,11 +244,11 @@ namespace HotelReservationSystem
             {
                 /// Refactor - Fixing the voilation of Dry Principle by calculating the total fare using a method call
                 Dictionary<string, int> rateRecords = new Dictionary<string, int>();
-                rateRecords = CalculateTotalRateForEachHotel();
+                rateRecords = CalculateTotalRateForEachHotel(type);
                 /// Dictionary to store the rating Records and name of dictionary
                 Dictionary<string, int> ratingRecords = new Dictionary<string, int>();
                 /// Adding the rating and hotel name to the dictionary
-                foreach (var records in onlineHotelRecords)
+                foreach (var records in ((type == 1) ? onlineHotelRecordsForRegularCutomers : onlineHotelRecordsForRewardCutomers))
                 {
                     ratingRecords.Add(records.Value.hotelName, records.Value.rating);
                 }

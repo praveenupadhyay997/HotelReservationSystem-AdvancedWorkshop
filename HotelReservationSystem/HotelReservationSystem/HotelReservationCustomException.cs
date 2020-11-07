@@ -17,7 +17,8 @@ namespace HotelReservationSystem
         public enum ExceptionType
         {
             RATE_ENTRY_NOT_EXIST,
-            NO_SUCH_HOTEL
+            NO_SUCH_HOTEL,
+            INVALID_CUSTOMER_TYPE
         }
         /// <summary>
         /// Creating an instance of the exception type to initailise with value
