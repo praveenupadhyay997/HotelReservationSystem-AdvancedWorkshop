@@ -11,8 +11,12 @@ namespace HotelReservationSystem
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using System.Text.RegularExpressions;
+
     public class HotelReservationRepository
     {
+        /// Regular expression for the date validator
+        public static string DATE_REGEX_VALIDATOR = @"^([0-9]{2})([,][0-9]{2})([,][0-9]{4})$";
         /// <summary>
         /// Dictionary to store the record of the hotel and the hotel details for regular customers
         /// </summary>
@@ -26,14 +30,60 @@ namespace HotelReservationSystem
         /// </summary>
         public static DateTime bookingDate;
         public static DateTime checkoutDate;
+        /// <summary>
+        /// UC10 -- Regex validator for the date passed by the user
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        public static bool IsValidDate(string date)
+        {
+            return Regex.IsMatch(date, DATE_REGEX_VALIDATOR);
+        }
+        /// <summary>
+        /// UC10 -- Refactor to validate the date of user check in and check out
+        /// </summary>
         public static void GetBookingAndCheckoutDate()
         {
             /// Getting the check-in date or the start date
             Console.WriteLine("Enter the booking date(DD,MM,YYYY) -- ");
-            bookingDate = DateTime.Parse(Console.ReadLine());
+            string dateEntryByUser = Console.ReadLine();
+            try
+            {
+                /// Checking for the validation of the date enteres by the user
+                if (IsValidDate(dateEntryByUser))
+                {
+                    bookingDate = DateTime.Parse(dateEntryByUser);
+                }
+                /// Catching the exception of entry errors committed by the user
+                else
+                {
+                    throw new HotelReservationCustomException(HotelReservationCustomException.ExceptionType.INVALID_DATE_ENTRY, "User Date Entry is not valid.");
+                }
+            }
+            catch(HotelReservationCustomException message)
+            {
+                Console.WriteLine(message.Message);
+            }
             /// Getting the check-in date or the start date
             Console.WriteLine("Enter the check-out date(DD,MM,YYYY) -- ");
-            checkoutDate = DateTime.Parse(Console.ReadLine());
+            string checkOutDateEntry = Console.ReadLine();
+            try
+            {
+                /// Checking for the validation of the date enteres by the user
+                if (IsValidDate(checkOutDateEntry))
+                {
+                    checkoutDate = DateTime.Parse(checkOutDateEntry);
+                }
+                /// Catching the exception of entry errors committed by the user
+                else
+                {
+                    throw new HotelReservationCustomException(HotelReservationCustomException.ExceptionType.INVALID_DATE_ENTRY, "User Date Entry is not valid.");
+                }
+            }
+            catch (HotelReservationCustomException message)
+            {
+                Console.WriteLine(message.Message);
+            }
         }
         /// <summary>
         /// Method to add the data to the multiple customer types
@@ -100,6 +150,7 @@ namespace HotelReservationSystem
         /// <returns></returns>
         public static Dictionary<string, int> CalculateTotalRateForEachHotel(int type)
         {
+            GetBookingAndCheckoutDate();
             /// Dictionary to store the (rateperday*numberofdaysofStay) and name of the hotel as the key
             Dictionary<string, int> rateRecords = new Dictionary<string, int>();
             /// Catching the exception of null value to the sorted list
