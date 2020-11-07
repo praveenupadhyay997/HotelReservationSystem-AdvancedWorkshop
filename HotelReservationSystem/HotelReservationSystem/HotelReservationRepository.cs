@@ -6,6 +6,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace HotelReservationSystem
 {
+    using LanguageExt;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -22,7 +23,7 @@ namespace HotelReservationSystem
         /// <param name="hotelName"></param>
         /// <param name="weekdayRate"></param>
         /// <param name="weekendRate"></param>
-        public static void AddHotelRecords(string hotelName, int weekdayRate, int weekendRate)
+        public static void AddHotelRecords(string hotelName, int weekdayRate, int weekendRate, int rating)
         {
             if (onlineHotelRecords.ContainsKey(hotelName))
             {
@@ -30,22 +31,23 @@ namespace HotelReservationSystem
             }
             else
             {
-                HotelDetails newHotelRecord = new HotelDetails(hotelName, weekdayRate, weekendRate);
+                HotelDetails newHotelRecord = new HotelDetails(hotelName, weekdayRate, weekendRate, rating);
                 onlineHotelRecords.Add(hotelName, newHotelRecord);
             }
         }
         /// <summary>
-        /// Method to displat the details of record in the address book
+        /// Method to display the details of record in the address book
         /// </summary>
         public static void DisplayRecordsInDictionary()
         {
             foreach (var records in onlineHotelRecords)
             {
-                Console.WriteLine($"Hotel Name = {records.Key}, WeekDay Rate Per Day = {records.Value.weekdayRate}, WeekDay Rate Per Day = {records.Value.weekendRate}\n");
+                Console.WriteLine($"Hotel Name = {records.Key}, WeekDay Rate Per Day = {records.Value.weekdayRate}, WeekDay Rate Per Day = {records.Value.weekendRate}, Ratings = {records.Value.rating}\n");
             }    
         }
         /// <summary>
         /// UC2 -- Finds the cheapest hotel for the date range
+        /// UC4 -- Considering the weekend and weekday difference of rates
         /// First finding the hotel with minimum totalExpense per day
         /// </summary>
         public static void FindCheapestHotel()
