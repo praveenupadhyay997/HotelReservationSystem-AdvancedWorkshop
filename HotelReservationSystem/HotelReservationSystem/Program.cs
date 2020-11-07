@@ -36,6 +36,7 @@ namespace HotelReservationSystem
             HotelReservationRepository.DisplayRecordsInDictionary();
             Console.WriteLine("Have you upgraded from the regular customer -");
             string choice = Console.ReadLine().ToLower();
+            /// Pass yes to test for the upgraded reward customers
             if(choice == "yes")
             {
                 DriverFunctionForCustomerType(2);
