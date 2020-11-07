@@ -22,6 +22,20 @@ namespace HotelReservationSystem
         /// </summary>
         public static Dictionary<string, HotelDetails> onlineHotelRecordsForRewardCutomers = new Dictionary<string, HotelDetails>();
         /// <summary>
+        /// Declaring the dates as static to access in the test class repository
+        /// </summary>
+        public static DateTime bookingDate;
+        public static DateTime checkoutDate;
+        public static void GetBookingAndCheckoutDate()
+        {
+            /// Getting the check-in date or the start date
+            Console.WriteLine("Enter the booking date(DD,MM,YYYY) -- ");
+            bookingDate = DateTime.Parse(Console.ReadLine());
+            /// Getting the check-in date or the start date
+            Console.WriteLine("Enter the check-out date(DD,MM,YYYY) -- ");
+            checkoutDate = DateTime.Parse(Console.ReadLine());
+        }
+        /// <summary>
         /// Method to add the data to the multiple customer types
         /// </summary>
         /// <param name="customerType"></param>
@@ -91,12 +105,6 @@ namespace HotelReservationSystem
             /// Catching the exception of null value to the sorted list
             try
             {
-                /// Getting the check-in date or the start date
-                Console.WriteLine("Enter the booking date(DD,MM,YYYY) -- ");
-                DateTime bookingDate = DateTime.Parse(Console.ReadLine());
-                /// Getting the check-in date or the start date
-                Console.WriteLine("Enter the check-out date(DD,MM,YYYY) -- ");
-                DateTime checkoutDate = DateTime.Parse(Console.ReadLine());
                 /// Computing the number ofdays of stay requested by the customer
                 int noOfDaysOfStay = (checkoutDate - bookingDate).Days + 1;
                 /// Iterating over the online hotel records to store the total expense and hotel name
