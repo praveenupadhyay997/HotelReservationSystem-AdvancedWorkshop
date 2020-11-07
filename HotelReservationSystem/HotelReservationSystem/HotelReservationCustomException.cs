@@ -13,12 +13,15 @@ namespace HotelReservationSystem
         /// Declaring enum to define the custome exceptions
         /// 0- No value in dictionary
         /// 1- No hotel found by that name or rate per day
+        /// 2- Invalid customer type
+        /// 3- Invalid date entry
         /// </summary>
         public enum ExceptionType
         {
             RATE_ENTRY_NOT_EXIST,
             NO_SUCH_HOTEL,
-            INVALID_CUSTOMER_TYPE
+            INVALID_CUSTOMER_TYPE,
+            INVALID_DATE_ENTRY
         }
         /// <summary>
         /// Creating an instance of the exception type to initailise with value
