@@ -150,6 +150,7 @@ namespace HotelReservationSystem
         /// <returns></returns>
         public static Dictionary<string, int> CalculateTotalRateForEachHotel(int type)
         {
+            if(bookingDate == null)
             GetBookingAndCheckoutDate();
             /// Dictionary to store the (rateperday*numberofdaysofStay) and name of the hotel as the key
             Dictionary<string, int> rateRecords = new Dictionary<string, int>();
