@@ -54,10 +54,10 @@ namespace HotelReservationSystem
             try
             {
                 /// Getting the check-in date or the start date
-                Console.WriteLine("Enter the booking date(DD,MM,YYYY):");
+                Console.WriteLine("Enter the booking date(DD,MM,YYYY) -- ");
                 DateTime bookingDate = DateTime.Parse(Console.ReadLine());
                 /// Getting the check-in date or the start date
-                Console.WriteLine("Enter the check-out date(DD,MM,YYYY):");
+                Console.WriteLine("Enter the check-out date(DD,MM,YYYY) -- ");
                 DateTime checkoutDate = DateTime.Parse(Console.ReadLine());
                 /// Computing the number ofdays of stay requested by the customer
                 int noOfDaysOfStay = (checkoutDate - bookingDate).Days + 1;
@@ -66,7 +66,24 @@ namespace HotelReservationSystem
                 /// Iterating over the online hotel records to store the total expense and hotel name
                 foreach (var records in onlineHotelRecords)
                 {
-                    int totalExpense = records.Value.weekdayRate * noOfDaysOfStay;
+                    int totalExpense = 0;
+                    DateTime currentDate = bookingDate;
+                    while (currentDate <= checkoutDate)
+                    {
+                        /// Checking the type of the date - Weekend (Saturday or Sunday)
+                        if (currentDate.DayOfWeek == DayOfWeek.Saturday || currentDate.DayOfWeek == DayOfWeek.Sunday)
+                        {
+                            /// Adding the weekend expense in the total expense
+                            totalExpense += records.Value.weekendRate;
+                        }
+                        else
+                        {
+                            /// Adding the weekday expense in the total expense
+                            totalExpense += records.Value.weekdayRate;
+                        }
+                        /// Moving to the next day to increment the current date
+                        currentDate = currentDate.AddDays(1);
+                    }
                     rateRecords.Add(records.Value.hotelName, totalExpense);
                 }
                 /// Executing the order by total expense and fetching the minimum value of rate

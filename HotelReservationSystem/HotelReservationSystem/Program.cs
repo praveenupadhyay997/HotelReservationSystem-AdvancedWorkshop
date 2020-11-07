@@ -20,7 +20,8 @@ namespace HotelReservationSystem
             HotelReservationRepository.AddHotelRecords("Ridgewood", 220, 150);
             /// Display the record in the hotel record dictionary
             HotelReservationRepository.DisplayRecordsInDictionary();
-            /// UC 2 -- Print the hotel with the cheapest rates
+            /// UC 2 and 4 -- Print the hotel with the cheapest rates
+            /// Also considered the weekend and weekdays to compute the total expense
             HotelReservationRepository.FindCheapestHotel();
             Console.ReadLine();
 
