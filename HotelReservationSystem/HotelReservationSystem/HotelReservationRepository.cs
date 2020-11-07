@@ -16,13 +16,13 @@ namespace HotelReservationSystem
         /// Dictionary to store the record of the hotel and the totalExpense of thehotel
         /// </summary>
         public static Dictionary<string, HotelDetails> onlineHotelRecords = new Dictionary<string, HotelDetails>();
-
         /// <summary>
         /// UC1 -- Adding the Hotel Record to the online hotel record dictionary
         /// </summary>
-        /// <param name="hotelName">Name of the hotel.</param>
-        /// <param name="ratePerDay">The totalExpense per day.</param>
-        public static void AddHotelRecords(string hotelName, int ratePerDay)
+        /// <param name="hotelName"></param>
+        /// <param name="weekdayRate"></param>
+        /// <param name="weekendRate"></param>
+        public static void AddHotelRecords(string hotelName, int weekdayRate, int weekendRate)
         {
             if (onlineHotelRecords.ContainsKey(hotelName))
             {
@@ -30,7 +30,7 @@ namespace HotelReservationSystem
             }
             else
             {
-                HotelDetails newHotelRecord = new HotelDetails(hotelName, ratePerDay);
+                HotelDetails newHotelRecord = new HotelDetails(hotelName, weekdayRate, weekendRate);
                 onlineHotelRecords.Add(hotelName, newHotelRecord);
             }
         }
@@ -41,7 +41,7 @@ namespace HotelReservationSystem
         {
             foreach (var records in onlineHotelRecords)
             {
-                Console.WriteLine($"Hotel Name = {records.Key}, Rate Per Day = {records.Value.ratePerDay}\n");
+                Console.WriteLine($"Hotel Name = {records.Key}, WeekDay Rate Per Day = {records.Value.weekdayRate}, WeekDay Rate Per Day = {records.Value.weekendRate}\n");
             }    
         }
         /// <summary>
@@ -66,7 +66,7 @@ namespace HotelReservationSystem
                 /// Iterating over the online hotel records to store the total expense and hotel name
                 foreach (var records in onlineHotelRecords)
                 {
-                    int totalExpense = records.Value.ratePerDay * noOfDaysOfStay;
+                    int totalExpense = records.Value.weekdayRate * noOfDaysOfStay;
                     rateRecords.Add(records.Value.hotelName, totalExpense);
                 }
                 /// Executing the order by total expense and fetching the minimum value of rate
