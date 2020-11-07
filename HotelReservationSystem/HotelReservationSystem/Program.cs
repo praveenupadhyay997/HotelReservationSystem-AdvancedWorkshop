@@ -20,6 +20,8 @@ namespace HotelReservationSystem
             HotelReservationRepository.AddHotelRecords("Ridgewood", 220);
             /// Display the record in the hotel record dictionary
             HotelReservationRepository.DisplayRecordsInDictionary();
+            /// UC 2 -- Print the hotel with the cheapest rates
+            HotelReservationRepository.FindCheapestHotel();
             Console.ReadLine();
 
         }
