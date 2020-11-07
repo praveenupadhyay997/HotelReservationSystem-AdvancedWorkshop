@@ -100,5 +100,91 @@ namespace HotelReservationSystem
                 Console.WriteLine(e.Message);
             }
         }
+        /// <summary>
+        /// UC6 -- Find cheapest best rated hotel for the customer date range of travel
+        /// Logic -- Consider the cheapest if it is high in rating and low in cost
+        /// Else consider the second next in cost reduction
+        /// </summary>
+        /// <returns></returns>
+        public static Tuple<string, int, int> FindCheapestBestRatedHotels()
+        {
+            bool flag = false;
+            /// Catching the exception of null value to the sorted list
+            try
+            {
+                /// Getting the check-in date or the start date
+                Console.WriteLine("Enter the booking date(DD,MM,YYYY) -- ");
+                DateTime bookingDate = DateTime.Parse(Console.ReadLine());
+                /// Getting the check-in date or the start date
+                Console.WriteLine("Enter the check-out date(DD,MM,YYYY) -- ");
+                DateTime checkoutDate = DateTime.Parse(Console.ReadLine());
+                /// Computing the number ofdays of stay requested by the customer
+                int noOfDaysOfStay = (checkoutDate - bookingDate).Days + 1;
+                /// Dictionary to store the (rateperday*numberofdaysofStay) and name of the hotel as the key
+                Dictionary<string, int> rateRecords = new Dictionary<string, int>();
+                /// Dictionary to store the (ratings) and name of the hotel as the key
+                Dictionary<string, int> ratingRecords = new Dictionary<string, int>();
+                /// Adding the rating and hotel name to the dictionary
+                foreach (var records in onlineHotelRecords)
+                {
+                    ratingRecords.Add(records.Value.hotelName, records.Value.rating);
+                }
+                /// Sorting the dictionary element by the rating in descending order
+                var keyValueForSortedRating = ratingRecords.OrderByDescending(sortedValuePair => sortedValuePair.Value);
+                /// Iterating over the online hotel records to store the total expense and hotel name
+                foreach (var records in onlineHotelRecords)
+                {
+                    int totalExpense = 0;
+                    DateTime currentDate = bookingDate;
+                    while (currentDate <= checkoutDate)
+                    {
+                        /// Checking the type of the date - Weekend (Saturday or Sunday)
+                        if (currentDate.DayOfWeek == DayOfWeek.Saturday || currentDate.DayOfWeek == DayOfWeek.Sunday)
+                        {
+                            /// Adding the weekend expense in the total expense
+                            totalExpense += records.Value.weekendRate;
+                        }
+                        else
+                        {
+                            /// Adding the weekday expense in the total expense
+                            totalExpense += records.Value.weekdayRate;
+                        }
+                        /// Moving to the next day to increment the current date
+                        currentDate = currentDate.AddDays(1);
+                    }
+                    rateRecords.Add(records.Value.hotelName, totalExpense);
+                }
+                /// Executing the order by total expense and fetching the minimum value of rate
+                var keyValueForSortedByRate = rateRecords.OrderBy(keyValueForSorted => keyValueForSorted.Value);
+                /// Getting the length of the sorted dictionary for rating
+                int length = (keyValueForSortedRating.Length() / 2);
+                /// Deciding the median amply rated hotel for the user
+                var ampleRating = keyValueForSortedRating.ElementAt(length);
+                /// Declaring a tuple to return name of hotel, rate and rating
+                Tuple<string, int, int> outputHotel;
+                /// Matching for amply rated and cheapest hotel too
+                foreach (var sortByRate in keyValueForSortedByRate)
+                {
+                    /// Condition check for the most suitable hotel according to  the use cases
+                        if (sortByRate.Key == ampleRating.Key)
+                        {
+                            outputHotel = new Tuple<string, int, int>(sortByRate.Key, sortByRate.Value, ampleRating.Value);
+                            flag = true;
+                            return outputHotel;
+                        }
+                }
+                /// Returning a default tuple in case of the no match so as to avoid null exception in Program.cs
+                if (flag == false)
+                    return new Tuple<string, int, int>("", 0, 0);
+            }
+            catch (HotelReservationCustomException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            /// Avoiding the "not all code path returns a value"
+            /// Logically if the execution reach this point then there is no match for the amply located hotel
+            /// However it is very unlikely that execution will reach here
+            return new Tuple<string, int, int>("", 0, 0);
+        }
     }
 }
