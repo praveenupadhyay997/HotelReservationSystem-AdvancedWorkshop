@@ -15,9 +15,9 @@ namespace HotelReservationSystem
             Console.WriteLine("Welcome to Hotel Reservation Program");
             Console.WriteLine("====================================");
             /// UC1 --Adding the hotel name and rate per day for regular customers only
-            HotelReservationRepository.AddHotelRecords("Lakewood", 110);
-            HotelReservationRepository.AddHotelRecords("Bridgewood", 150);
-            HotelReservationRepository.AddHotelRecords("Ridgewood", 220);
+            HotelReservationRepository.AddHotelRecords("Lakewood", 110, 90);
+            HotelReservationRepository.AddHotelRecords("Bridgewood", 150, 50);
+            HotelReservationRepository.AddHotelRecords("Ridgewood", 220, 150);
             /// Display the record in the hotel record dictionary
             HotelReservationRepository.DisplayRecordsInDictionary();
             /// UC 2 -- Print the hotel with the cheapest rates
